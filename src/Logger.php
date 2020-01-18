@@ -12,17 +12,17 @@ class Logger implements LoggerInterface
 {
     use LoggerTrait;
 
-    /** @var \Zane\Logger\Storage $storage A method of storing the logs. */
-    public Storage $storage;
+    /** @var \Zane\Logger\StorageInterface $storage A method of storing the logs. */
+    public StorageInterface $storage;
 
     /**
      * Constuct a new logger.
      *
-     * @param \Zane\Logger\Storage $storage A method of storing the logs.
+     * @param \Zane\Logger\StorageInterface $storage A method of storing the logs.
      *
      * @return void Returns nothing.
      */
-    public function __construct(Storage $storage)
+    public function __construct(StorageInterface $storage)
     {
         $this->storage = $storage;
     }
