@@ -2,8 +2,12 @@
 
 namespace Zane\Logger;
 
-use Psr\Log\LoggerInterface;
-use Psr\Log\LoggerTrait;
+use Psr\Log\{
+    InvalidArgumentException,
+    LoggerInterface,
+    LoggerTrait,
+    LogLevel
+};
 
 /**
  * The application logger.
@@ -14,6 +18,18 @@ class Logger implements LoggerInterface
 
     /** @var \Zane\Logger\StorageInterface $storage A method of storing the logs. */
     public StorageInterface $storage;
+
+    /** @var array $acceptedLogLevels A list of supported log levels. */
+    public array $acceptedLogLevels = [
+        LogLevel::EMERGENCY
+        LogLevel::ALERT
+        LogLevel::CRITICAL
+        LogLevel::ERROR
+        LogLevel::WARNING
+        LogLevel::NOTICE
+        LogLevel::INFO
+        LogLevel::DEBUG
+    ]
 
     /**
      * Constuct a new logger.
@@ -34,10 +50,15 @@ class Logger implements LoggerInterface
      * @param string $message The log message.
      * @param array  $context The log context.
      *
+     * @throws \Psr\Log\InvalidArgumentException If the implementation does not support this log level.
+     *
      * @return void Returns nothing.
      */
     public function log($level, $message, array $context = array()): void
     {
+        if (!in_array($level, $this->acceptedLogLevels)) {
+            throw InvalidArgumentException('The current implementation does not support this log level.');
+        }
         $replace = [];
         foreach ($context as $key => $val) {
             if (!is_array($val) && (!is_object($val) || method_exists($val, '__toString'))) {
