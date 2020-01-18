@@ -3,125 +3,28 @@
 namespace Zane\Logger;
 
 use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerTrait;
 
 /**
  * The application logger.
  */
 class Logger implements LoggerInterface
 {
-    /**
-     * System is unusable.
-     *
-     * @param string $message The log message.
-     * @param array  $context The log context.
-     *
-     * @return void Returns nothing.
-     */
-    public function emergency(string $message, array $context = array())
-    {
-        
-    }
+    use LoggerTrait;
+
+    /** @var \Zane\Logger\Storage $storage A method of storing the logs. */
+    public Storage $storage;
 
     /**
-     * Action must be taken immediately.
+     * Constuct a new logger.
      *
-     * Example: Entire website down, database unavailable, etc. This should
-     * trigger the SMS alerts and wake you up.
-     *
-     * @param string $message The log message.
-     * @param array  $context The log context.
+     * @param \Zane\Logger\Storage $storage A method of storing the logs.
      *
      * @return void Returns nothing.
      */
-    public function alert(string $message, array $context = array())
+    public function __construct(Storage $storage)
     {
-        
-    }
-
-    /**
-     * Critical conditions.
-     *
-     * Example: Application component unavailable, unexpected exception.
-     *
-     * @param string $message The log message.
-     * @param array  $context The log context.
-     *
-     * @return void Returns nothing.
-     */
-    public function critical(string $message, array $context = array())
-    {
-        
-    }
-
-    /**
-     * Runtime errors that do not require immediate action but should typically
-     * be logged and monitored.
-     *
-     * @param string $message The log message.
-     * @param array  $context The log context.
-     *
-     * @return void Returns nothing.
-     */
-    public function error(string $message, array $context = array())
-    {
-        
-    }
-
-    /**
-     * Exceptional occurrences that are not errors.
-     *
-     * Example: Use of deprecated APIs, poor use of an API, undesirable things
-     * that are not necessarily wrong.
-     *
-     * @param string $message The log message.
-     * @param array  $context The log context.
-     *
-     * @return void Returns nothing.
-     */
-    public function warning(string $message, array $context = array())
-    {
-        
-    }
-
-    /**
-     * Normal but significant events.
-     *
-     * @param string $message The log message.
-     * @param array  $context The log context.
-     *
-     * @return void Returns nothing.
-     */
-    public function notice(string $message, array $context = array())
-    {
-        
-    }
-
-    /**
-     * Interesting events.
-     *
-     * Example: User logs in, SQL logs.
-     *
-     * @param string $message The log message.
-     * @param array  $context The log context.
-     *
-     * @return void Returns nothing.
-     */
-    public function info(string $message, array $context = array())
-    {
-        
-    }
-
-    /**
-     * Detailed debug information.
-     *
-     * @param string $message The log message.
-     * @param array  $context The log context.
-     *
-     * @return void Returns nothing.
-     */
-    public function debug($message, array $context = array())
-    {
-        
+        $this->storage = $storage;
     }
 
     /**
@@ -133,8 +36,15 @@ class Logger implements LoggerInterface
      *
      * @return void Returns nothing.
      */
-    public function log($level, $message, array $context = array())
+    public function log($level, $message, array $context = array()): void
     {
-        
+        $replace = [];
+        foreach ($context as $key => $val) {
+            if (!is_array($val) && (!is_object($val) || method_exists($val, '__toString'))) {
+                $replace['{' . $key . '}'] = $val;
+            }
+        }
+        $message = strtr($message, $replace);
+        $this->storage->log($level, $message);
     }
 }
