@@ -1,0 +1,25 @@
+{
+    "name": "zane-framework/logger",
+    "description": "A clean and elegant logger that is PSR 3 compliant.",
+    "keywords": [],
+    "license": "MIT",
+    "type": "library",
+    "require": {
+        "php": "^7.4",
+        "psr/log": "*",
+    },
+    "require-dev": {
+        "vimeo/psalm": "^3",
+        "phpunit/phpunit": "^8.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Zane\\Logger\\": "./src"
+        }
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "prefer-stable": true
+}
