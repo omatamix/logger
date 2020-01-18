@@ -21,14 +21,14 @@ class Logger implements LoggerInterface
 
     /** @var array $acceptedLogLevels A list of supported log levels. */
     public array $acceptedLogLevels = [
-        LogLevel::EMERGENCY
-        LogLevel::ALERT
-        LogLevel::CRITICAL
-        LogLevel::ERROR
-        LogLevel::WARNING
-        LogLevel::NOTICE
-        LogLevel::INFO
-        LogLevel::DEBUG
+        LogLevel::EMERGENCY,
+        LogLevel::ALERT,
+        LogLevel::CRITICAL,
+        LogLevel::ERROR,
+        LogLevel::WARNING,
+        LogLevel::NOTICE,
+        LogLevel::INFO,
+        LogLevel::DEBUG,
     ]
 
     /**
