@@ -54,7 +54,7 @@ class Logger implements LoggerInterface
      *
      * @return void Returns nothing.
      */
-    public function log($level, $message, array $context = array()): void
+    public function log($level, $message, array $context = []): void
     {
         if (!in_array($level, $this->acceptedLogLevels)) {
             throw InvalidArgumentException('The current implementation does not support this log level.');
