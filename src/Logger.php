@@ -29,7 +29,7 @@ class Logger implements LoggerInterface
         LogLevel::NOTICE,
         LogLevel::INFO,
         LogLevel::DEBUG,
-    ]
+    ];
 
     /**
      * Constuct a new logger.
