@@ -3,69 +3,40 @@
 namespace Zane\Logger;
 
 use Psr\Log\{
-    InvalidArgumentException,
-    LoggerInterface,
-    LoggerTrait,
-    LogLevel
+    LoggerAwareInterface,
+    LoggerAwareTrait,
+    LoggerInterface
 };
+use Psr\Log\NullLogger;
 
 /**
  * The application logger.
  */
-class Logger implements LoggerInterface
+class Logger implements LoggerAwareInterface
 {
-    use LoggerTrait;
-
-    /** @var \Zane\Logger\StorageInterface $storage A method of storing the logs. */
-    public StorageInterface $storage;
-
-    /** @var array $acceptedLogLevels A list of supported log levels. */
-    public array $acceptedLogLevels = [
-        LogLevel::EMERGENCY,
-        LogLevel::ALERT,
-        LogLevel::CRITICAL,
-        LogLevel::ERROR,
-        LogLevel::WARNING,
-        LogLevel::NOTICE,
-        LogLevel::INFO,
-        LogLevel::DEBUG,
-    ];
+    use LoggerAwareTrait;
 
     /**
-     * Constuct a new logger.
+     * Construct the application logger.
      *
-     * @param \Zane\Logger\StorageInterface $storage A method of storing the logs.
+     * @param \Psr\Log\LoggerInterface|null The logger.
      *
      * @return void Returns nothing.
      */
-    public function __construct(StorageInterface $storage)
+    public function __construct(LoggerInterface $logger = null)
     {
-        $this->storage = $storage;
+        !$logger ? $this->setLogger(new NullLogger()) : $this->setLogger($logger);
     }
 
     /**
-     * Logs with an arbitrary level.
+     * Returns the logger instance.
      *
-     * @param mixed  $level   The log level.
-     * @param string $message The log message.
-     * @param array  $context The log context.
+     * @throws \RuntimeException If the logger instance could not be allocated.
      *
-     * @throws \Psr\Log\InvalidArgumentException If the implementation does not support this log level.
-     *
-     * @return void Returns nothing.
+     * @return Returns the instance of the logger.
      */
-    public function log($level, $message, array $context = []): void
+    public function __invoke(): LoggerInterface
     {
-        if (!in_array($level, $this->acceptedLogLevels)) {
-            throw new InvalidArgumentException('The current implementation does not support this log level.');
-        }
-        $replace = [];
-        foreach ($context as $key => $val) {
-            if (!is_array($val) && (!is_object($val) || method_exists($val, '__toString'))) {
-                $replace['{' . $key . '}'] = $val;
-            }
-        }
-        $message = strtr($message, $replace);
-        $this->storage->log($level, $message);
+        return $this->logger;
     }
 }
